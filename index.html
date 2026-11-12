@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ================= SEO (ARAMA MOTORU OPTİMİZASYONU) ================= -->
+    <title>KTD AIRLINES | Ucuz Uçak Bileti ve Filo Yönetimi</title>
+    <meta name="description" content="KTD AIRLINES ile dünyayı keşfedin. En uygun uçak biletleri, geniş filo ağı, online check-in ve güvenli ödeme seçenekleri. Hemen bilet alın, KTD Puan kazanın!">
+    <meta name="keywords" content="KTD Airlines, KTD, uçak bileti, ucuz uçak bileti, uçuş ara, filo yönetimi, koltuk seçimi, havayolu">
+    <meta name="author" content="KTD AIRLINES - Mahmut Karaca, Mehmet Demir, Arif Tanrıverdi">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph (Sosyal Medya Paylaşımları İçin) -->
+    <meta property="og:title" content="KTD AIRLINES | Ucuz Uçak Bileti">
+    <meta property="og:description" content="En uygun uçak biletleri ve geniş filo ağımızla güvenli seyahat.">
+    <meta property="og:image" content="KTD.png">
+    <meta property="og:url" content="https://www.ktdairlines.com">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Önizleme Kartı -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KTD AIRLINES">
+    <meta name="twitter:description" content="En uygun uçak biletleri ve geniş filo ağımızla güvenli seyahat.">
+    <meta name="twitter:image" content="KTD.png">
+    <!-- =================================================================== -->
+
+    <link rel="icon" href="KTD.png" type="image/png">
+    
+    <!-- FontAwesome İkonları -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+
+    <!-- ÜST BİLGİ ÇUBUĞU -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="search-container">
+                <i class="fas fa-search" id="searchIcon"></i>
+                <input type="text" id="siteSearch" placeholder="Sitede ara (Enter'a basın)...">
+            </div>
+            <div class="top-bar-actions">
+                <div class="lang-selector" id="langToggle">
+                    <i class="fas fa-globe"></i> <span id="currentLang">TR</span>
+                </div>
+                <div class="notification-container">
+                    <i class="fas fa-bell" id="notifBtn"></i>
+                    <span class="notif-badge">5</span>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-header">Bildirimler</div>
+                        <div class="notif-item"><i class="fas fa-envelope"></i> E-postanı doğrula</div>
+                        <div class="notif-item"><i class="fas fa-plane"></i> Hazır mısın? Uçuş ayarla</div>
+                        <div class="notif-item"><i class="fas fa-compass"></i> Keşfet: Yeni rotalar</div>
+                        <div class="notif-item"><i class="fas fa-star"></i> KTD Puan fırsatları</div>
+                        <div class="notif-item"><i class="fas fa-tag"></i> Sana özel indirimler</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <div class="nav-container">
+            <div class="logo" id="logoHomeBtn">
+                <img src="KTD.png" alt="KTD" class="logo-img">
+                KTD AIRLINES
+            </div>
+
+            <nav class="main-nav" id="mainNav">
+                <a id="navBook" data-tr="Bilet Al & Koltuk Seç" data-en="Book & Select Seat">Bilet Al & Koltuk Seç</a>
+                <a id="navFleet" data-tr="Filo" data-en="Fleet">Filo</a>
+                <a id="navSupport" data-tr="Destek" data-en="Support">Destek</a>
+                <a id="navContact" data-tr="Bize Ulaşın" data-en="Contact Us">Bize Ulaşın</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="miles-badge" id="milesBadge">⭐ 1.500 KTD Puan</span>
+                <button class="theme-btn" id="themeToggle">🌙 Karanlık Mod</button>
+                <button class="btn-login" id="openLoginModal" data-tr="Giriş Yap / Üye Ol" data-en="Login / Register">Giriş Yap / Üye Ol</button>
+                <button class="btn-login hidden" id="userProfileBtn" style="background: var(--brand-dark);">👤 Profilim</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK -->
+    <div id="mainHome">
+        <section class="hero">
+            <div class="hero-content">
+                <h1 id="heroTitle" data-tr="KTD AIRLINES ile Dünyayı Keşfet" data-en="Discover the World with KTD AIRLINES">KTD AIRLINES ile Dünyayı Keşfet</h1>
+                <p id="heroSubtitle" data-tr="En uygun uçak biletleri ve geniş filo ağımızla güvenli seyahat." data-en="Safe travel with the most affordable flight tickets and our wide fleet network.">En uygun uçak biletleri ve geniş filo ağımızla güvenli seyahat.</p>
+                
+                <div class="search-widget" id="mainSearchWidget">
+                    <div class="widget-tabs">
+                        <button class="w-tab active" data-target="flight">
+                            <span class="w-icon">✈️</span> Ucuz Uçak Bileti Ara
+                        </button>
+                        <button class="w-tab" data-target="checkin">
+                            <span class="w-icon">🎒</span> Online Check-in
+                        </button>
+                        <button class="w-tab" data-target="manage">
+                            <span class="w-icon">🎫</span> Uçuşunu Yönet
+                        </button>
+                        <button class="w-tab" data-target="status">
+                            <span class="w-icon">🕒</span> Uçuş Durumu
+                        </button>
+                    </div>
+
+                    <div class="widget-body">
+                        <div id="pane-flight" class="w-pane active">
+                            <div class="trip-type">
+                                <label><input type="radio" name="trip" checked> Gidiş Dönüş</label>
+                                <label><input type="radio" name="trip"> Tek Yön</label>
+                            </div>
+                            
+                            <div class="search-grid">
+                                <div class="s-input">
+                                    <label>Nereden</label>
+                                    <select id="fromCity">
+                                        <option value="İstanbul">İstanbul</option>
+                                    </select>
+                                </div>
+                                <button class="swap-btn" title="Yer Değiştir">⇆</button>
+                                <div class="s-input">
+                                    <label>Nereye</label>
+                                    <select id="toCity">
+                                        <option value="Londra">Londra</option>
+                                    </select>
+                                </div>
+                                <div class="s-input">
+                                    <label>Gidiş Tarihi</label>
+                                    <input type="date" id="departDate">
+                                </div>
+                                <div class="s-input">
+                                    <label>Yolcu</label>
+                                    <select>
+                                        <option>1 Yetişkin</option>
+                                        <option>2 Yetişkin</option>
+                                    </select>
+                                </div>
+                                <button class="btn-search-big" id="searchFlightBtn">Ucuz Uçuş Ara</button>
+                            </div>
+                            <div class="ktd-points-info">
+                                ✨ Bu uçuşta <strong>KTD Puan</strong> kazanın! Her uçuşta ekstra avantaj.
+                            </div>
+                        </div>
+
+                        <div id="pane-checkin" class="w-pane">
+                            <div class="search-grid" style="grid-template-columns: 1fr 1fr auto;">
+                                <div class="s-input">
+                                    <label>Uçuş Kodu (PNR)</label>
+                                    <input type="text" id="checkinCode" placeholder="Örn: KTD101">
+                                </div>
+                                <div class="s-input">
+                                    <label>Soyadınız</label>
+                                    <input type="text" id="checkinSurname" placeholder="Soyadınız">
+                                </div>
+                                <button class="btn-search-big" id="checkinBtn">Check-in Yap</button>
+                            </div>
+                        </div>
+
+                        <div id="pane-manage" class="w-pane">
+                            <div class="search-grid" style="grid-template-columns: 1fr auto;">
+                                <div class="s-input">
+                                    <label>Uçuş Kodu (PNR)</label>
+                                    <input type="text" placeholder="Bilet kodunuz">
+                                </div>
+                                <button class="btn-search-big" id="manageBtn">Bileti Bul</button>
+                            </div>
+                        </div>
+
+                        <div id="pane-status" class="w-pane">
+                            <div class="search-grid" style="grid-template-columns: 1fr auto;">
+                                <div class="s-input">
+                                    <label>Uçuş Numarası</label>
+                                    <input type="text" id="statusFlightCode" placeholder="Örn: KTD101">
+                                </div>
+                                <button class="btn-search-big" id="statusBtn">Durum Sorgula</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="quick-links">
+            <div class="quick-card" id="quickSeat">
+                <div class="quick-icon">💺</div>
+                <h4>Koltuk Seçimi</h4>
+            </div>
+            <div class="quick-card" id="quickFleet">
+                <div class="quick-icon">🛫</div>
+                <h4>Filo ve Teknik</h4>
+            </div>
+            <div class="quick-card" id="quickLiveFlights">
+                <div class="quick-icon">🌍</div>
+                <h4>Canlı Uçuş Takibi</h4>
+            </div>
+            <div class="quick-card" id="quickStatus">
+                <div class="quick-icon">🕒</div>
+                <h4>Uçuş Durumu</h4>
+            </div>
+            <div class="quick-card" id="quickSupport">
+                <div class="quick-icon">❓</div>
+                <h4>Yardım / SSS</h4>
+            </div>
+        </div>
+
+        <!-- KAMPANYALAR -->
+        <div class="container">
+            <div class="section-title">
+                <h2>Fırsat Dolu Kampanyalar</h2>
+                <p>KTD AIRLINES ayrıcalıklarıyla ucuza uçun. Bilet almak için karta tıklayın.</p>
+            </div>
+            <div class="campaign-slider-container">
+                <button class="slider-btn prev" id="prevCampaign">❮</button>
+                <div class="campaign-track" id="campaignTrack"></div>
+                <button class="slider-btn next" id="nextCampaign">❯</button>
+            </div>
+        </div>
+
+        <!-- İNDİRİM KODLARI -->
+        <div class="container">
+            <div class="section-title">
+                <h2>Size Özel İndirim Kodları</h2>
+                <p>Hemen kopyalayın, ödeme adımında kullanın!</p>
+            </div>
+            <div class="coupon-grid" id="couponGrid"></div>
+        </div>
+
+        <!-- YAPIMCILAR -->
+        <div class="container" id="teamSection">
+            <div class="section-title">
+                <h2>Sitemizi Hazırlayan Ekip</h2>
+                <p>Bu projeyi hayata geçirmek için birlikte çalıştık.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-icon">💻</div>
+                    <h3>Mahmut Karaca</h3>
+                    <p class="team-role">HTML Geliştirici</p>
+                    <p>Sitenin iskeletini oluşturdu, butonları ve tıklama alanlarını kodladı.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-icon">🎨</div>
+                    <h3>Mehmet Demir</h3>
+                    <p class="team-role">CSS Tasarımcısı</p>
+                    <p>Sitenin renklerini, görünümünü ve göz alıcı kırmızı-beyaz tasarımını hazırladı.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-icon">⚙️</div>
+                    <h3>Arif Tanrıverdi</h3>
+                    <p class="team-role">JavaScript Uzmanı</p>
+                    <p>Sitenin hareket etmesini, yapay zekaları ve koltuk seçimini kodladı.</p>
+                </div>
+            </div>
+            
+            <div class="deepseek-info">
+                <span style="font-size: 24px;">🤖</span>
+                <div>
+                    <strong>Yapay Zeka Desteği:</strong> Site sahipleri, bu projeyi geliştirirken yapay zeka olarak <a href="https://chat.deepseek.com/" target="_blank">DeepSeek</a>'ten de yararlanmıştır.
+                </div>
+            </div>
+        </div>
+
+        <!-- DESTEK & İLETİŞİM -->
+        <div class="container" id="supportSection">
+            <div class="section-title">
+                <h2>Destek & İletişim</h2>
+            </div>
+            <div class="support-cards">
+                <div class="support-card" onclick="alert('Canlı destek ekibimiz en kısa sürede bağlanacaktır. (Demo)')">
+                    <div class="support-icon">💬</div>
+                    <h3>Canlı Destek</h3>
+                </div>
+                <div class="support-card" onclick="document.getElementById('openLoginModal').click()">
+                    <div class="support-icon">🤖</div>
+                    <h3>KTD Asistan</h3>
+                </div>
+                <div class="support-card" onclick="window.location.href='mailto:destek@ktdairlines.com'">
+                    <div class="support-icon">📧</div>
+                    <h3>E-posta</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FİLO SAYFASI -->
+    <div id="fleetSection" class="container hidden" style="margin-top: 40px; margin-bottom: 60px;">
+        <button class="btn-back" id="backFromFleetBtn">← Ana Sayfaya Dön</button>
+        <div class="section-title" style="margin-top: 10px;">
+            <h2>Filo Envanteri</h2>
+            <p>KTD AIRLINES bünyesindeki modern ve konforlu uçak filosu.</p>
+        </div>
+        <div class="fleet-grid" id="fleetGrid"></div>
+    </div>
+
+    <!-- KULLANICI PROFİL SAYFASI -->
+    <div id="profileSection" class="container hidden" style="margin-top: 40px; margin-bottom: 60px;">
+        <button class="btn-back" id="backFromProfileBtn">← Ana Sayfaya Dön</button>
+        
+        <div class="profile-dashboard">
+            <div class="profile-sidebar">
+                <div class="profile-card">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="width: 80px; height: 80px; background: var(--brand-red); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 36px;"><i class="fas fa-user"></i></div>
+                        <h3 id="profileDisplayName" style="margin-top: 10px;">Kullanıcı Adı</h3>
+                        <p id="profileDisplayUsername" style="color: var(--text-light); font-size: 14px;">@kullanici</p>
+                        <p id="profileDisplayPoints" style="color: var(--brand-red); font-size: 14px; font-weight: bold; margin-top: 5px;">⭐ 0 KTD Puan</p>
+                    </div>
+                    
+                    <h4 style="margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">Profili Düzenle</h4>
+                    <div class="input-group">
+                        <label>Ad Soyad</label>
+                        <input type="text" id="editName">
+                    </div>
+                    <div class="input-group">
+                        <label>E-posta Adresi</label>
+                        <input type="email" id="editEmail" placeholder="ornek@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Yeni Şifre (Boş bırakırsanız değişmez)</label>
+                        <input type="password" id="editPassword" placeholder="••••••">
+                    </div>
+                    <div id="editProfileMsg" style="font-size: 13px; margin-bottom: 10px; font-weight: bold;"></div>
+                    <button class="btn-submit" id="saveProfileChangesBtn" style="padding: 10px; font-size: 14px;">Değişiklikleri Kaydet</button>
+                    <button class="btn-submit" id="logoutProfileBtn" style="background: #555; margin-top: 10px; padding: 10px; font-size: 14px;">Çıkış Yap</button>
+                </div>
+            </div>
+
+            <div class="profile-main">
+                <h3 style="margin-bottom: 20px; color: var(--text); border-left: 4px solid var(--brand-red); padding-left: 10px;">Biletlerim ve Uçuş Detaylarım</h3>
+                <div id="myTicketsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REZERVASYON SİHİRBAZI -->
+    <div id="bookingWizard" class="container hidden" style="margin-top: 20px; margin-bottom: 60px;">
+        <button class="btn-back" id="backToHomeBtn">← Ana Sayfaya Dön</button>
+        <div id="step1_seat">
+            <div class="section-title" style="margin-top: 10px;">
+                <h2>Uçuş ve Koltuk Seçimi</h2>
+                <p id="bookingRouteText"></p>
+            </div>
+            <div class="modal-content" style="max-width: 100%;">
+                <div class="seat-map-container">
+                    <div class="cockpit">✈ Kokpit</div>
+                    <div class="seat-legend" style="margin-bottom: 10px; justify-content: center;">
+                        <div class="legend-item"><div class="legend-box" style="background:#f8d7da;"></div> Ön Bölge (+300 TL)</div>
+                        <div class="legend-item"><div class="legend-box" style="background:#fff3cd;"></div> Orta Bölge (+100 TL)</div>
+                        <div class="legend-item"><div class="legend-box" style="background:#d4edda;"></div> Arka Bölge (Ücretsiz)</div>
+                    </div>
+                    <div id="seatGrid" class="seat-grid"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <strong>Seçilen Koltuk: </strong><span id="selectedSeatText" style="color:var(--brand-red); font-size:18px; font-weight:800;">Yok</span>
+                        <span id="seatPriceInfo" style="color:var(--text-light); font-size:14px; margin-left:10px;"></span>
+                    </div>
+                    <button class="btn-submit" style="width:auto; padding:12px 30px; margin:0;" id="toStep2Btn">Devam Et ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step2_services" class="hidden">
+            <div class="section-title" style="margin-top: 10px;">
+                <h2>Ekstra Hizmetler & Sigorta</h2>
+            </div>
+            <div class="modal-content" style="max-width: 100%;">
+                <div class="extra-services">
+                    <label class="service-card">
+                        <input type="checkbox" value="500" class="extra-service-checkbox">
+                        <div><strong>+10 kg Ekstra Bagaj</strong><br><span style="color:var(--brand-red); font-weight:700;">+500 TL</span></div>
+                    </label>
+                    <label class="service-card">
+                        <input type="checkbox" value="300" class="extra-service-checkbox">
+                        <div><strong>Sıcak Yemek Menüsü</strong><br><span style="color:var(--brand-red); font-weight:700;">+300 TL</span></div>
+                    </label>
+                    <label class="service-card">
+                        <input type="checkbox" value="450" class="extra-service-checkbox">
+                        <div><strong>Seyahat Sigortası</strong><br><span style="color:var(--brand-red); font-weight:700;">+450 TL</span></div>
+                    </label>
+                </div>
+                <div style="background:var(--bg); padding:15px; border-radius:10px; margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold; font-size:16px;">Toplam Tutar:</span>
+                    <span id="totalPriceText" style="font-weight:800; color:var(--success); font-size:22px;">-</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:20px;">
+                    <button class="btn-select" style="width:auto; padding:12px 30px;" id="backToStep1Btn">← Geri Dön</button>
+                    <button class="btn-submit" style="width:auto; padding:12px 30px; margin:0;" id="toPaymentBtn">Ödemeye Geç ➔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BİLET DETAY MODALI -->
+    <div class="modal" id="ticketModal">
+        <div class="modal-content ticket-content">
+            <div class="ticket-header">
+                <h2>🎉 Uçuşunuz Onaylandı!</h2>
+                <p>Biletiniz e-posta adresinize gönderilmiştir.</p>
+            </div>
+            <div class="ticket-body">
+                <div class="ticket-row"><span>Uçuş Kodu:</span><strong id="ticketFlightCode"></strong></div>
+                <div class="ticket-row"><span>Nereden:</span><strong id="ticketFrom"></strong></div>
+                <div class="ticket-row"><span>Nereye:</span><strong id="ticketTo"></strong></div>
+                <div class="ticket-row"><span>Tarih:</span><strong id="ticketDate"></strong></div>
+                <div class="ticket-row"><span>Saat:</span><strong id="ticketTime"></strong></div>
+                <div class="ticket-row"><span>Uçak:</span><strong id="ticketAircraft"></strong></div>
+                <div class="ticket-row"><span>Koltuk:</span><strong id="ticketSeat"></strong></div>
+                <div class="ticket-row"><span>Toplam Tutar:</span><strong id="ticketTotal"></strong></div>
+                <div class="ticket-row" style="border:none; color:var(--brand-red); font-weight:bold;"><span>Kazanılan Puan:</span><strong>+150 KTD Puan</strong></div>
+            </div>
+            <button class="btn-submit" onclick="document.getElementById('ticketModal').classList.remove('active'); goHome();">Ana Sayfaya Dön</button>
+        </div>
+    </div>
+
+    <!-- GİRİŞ YAP / ÜYE OL -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content login-modal-content">
+            <button class="modal-close" id="closeLoginModal">×</button>
+            <div class="login-tabs">
+                <button class="login-tab active" id="tabUser">Kullanıcı Girişi</button>
+                <button class="login-tab" id="tabRegister">Üye Ol</button>
+                <button class="login-tab" id="tabAdmin">Yönetici Girişi</button>
+            </div>
+            <div id="formUserLogin" class="login-form">
+                <h2>Tekrar Hoş Geldiniz!</h2>
+                <div class="input-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="loginUsername" placeholder="kullanici_adi">
+                </div>
+                <div class="input-group">
+                    <label>Şifre</label>
+                    <input type="password" id="loginPassword" placeholder="••••••">
+                </div>
+                <div id="loginError" class="error-msg"></div>
+                <button class="btn-submit" id="demoUserLoginBtn">Giriş Yap</button>
+                <div class="login-footer">Hesabın yok mu? <a id="switchToRegister">Hemen Üye Ol</a></div>
+                <div class="admin-switch">Sitenin sahibi misin? <a id="switchToAdmin">Yönetici Girişi Yap</a></div>
+            </div>
+            <div id="formRegister" class="login-form hidden">
+                <h2>Aramıza Katıl!</h2>
+                <div class="input-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" id="regName" placeholder="Adınız Soyadınız">
+                </div>
+                <div class="input-group">
+                    <label>E-posta Adresi</label>
+                    <input type="email" id="regEmail" placeholder="ornek@email.com">
+                </div>
+                <div class="input-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="regUsername" placeholder="kullanici_adi">
+                </div>
+                <div class="input-group">
+                    <label>Şifre</label>
+                    <input type="password" id="regPassword" placeholder="••••••">
+                </div>
+                <div id="regError" class="error-msg"></div>
+                <button class="btn-submit" id="demoRegisterBtn">Kayıt Ol</button>
+                <div class="login-footer">Zaten hesabın var mı? <a id="switchToUser">Giriş Yap</a></div>
+            </div>
+            <div id="formAdmin" class="login-form hidden">
+                <h2>Yönetici Girişi</h2>
+                <div class="input-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="adminUser" placeholder="ADMİN">
+                </div>
+                <div class="input-group">
+                    <label>Şifre</label>
+                    <input type="password" id="adminPass" placeholder="••••••">
+                </div>
+                <div id="adminError" class="error-msg"></div>
+                <button class="btn-submit" id="doAdminLoginBtn">Yönetici Girişi Yap</button>
+                <div class="login-footer">Kullanıcı mısın? <a id="switchToUserAdmin">Kullanıcı Girişine Dön</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÖDEME MODALI -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closePaymentModal">×</button>
+            <h2 style="text-align:center;">Güvenli Ödeme</h2>
+            <p style="text-align:center; color:var(--text-light); font-size:14px; margin-bottom:20px;">Seçilen Koltuk: <span id="paySeat" style="font-weight:bold; color:var(--brand-red);"></span></p>
+            <div class="input-group">
+                <label>İndirim Kuponu / Kampanya Kodu</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="couponCode" placeholder="KTDKASIM">
+                    <button class="btn-submit" style="width:auto; margin:0; padding:0 20px;" id="applyCouponBtn">Uygula</button>
+                </div>
+                <small id="couponMsg" style="display:none; margin-top:5px; font-weight:bold;"></small>
+            </div>
+            <div class="input-group"><label>Kart Üzerindeki İsim</label><input type="text" id="cardName" placeholder="Ad Soyad"></div>
+            <div class="input-group"><label>Kart Numarası</label><input type="text" id="cardNumber" placeholder="0000 0000 0000 0000"></div>
+            <div style="display:flex; gap:15px;">
+                <div class="input-group" style="flex:1;"><label>Son Kullanma (AA/YY)</label><input type="text" id="cardExpiry" placeholder="MM/YY"></div>
+                <div class="input-group" style="flex:1;"><label>CVV</label><input type="text" id="cardCvv" placeholder="123"></div>
+            </div>
+            <div style="background:var(--bg); padding:15px; border-radius:10px; margin:15px 0; display:flex; justify-content:space-between;">
+                <span style="font-weight:bold;">Ödenecek Tutar:</span>
+                <span id="finalAmount" style="font-weight:800; color:var(--success); font-size:18px;">-</span>
+            </div>
+            <button class="btn-submit" id="completePaymentBtn">Ödemeyi Tamamla</button>
+        </div>
+    </div>
+
+    <!-- CANLI UÇUŞ TAKİP MODALI -->
+    <div class="modal" id="liveFlightsModal">
+        <div class="modal-content" style="max-width: 900px; padding: 10px;">
+            <button class="modal-close" onclick="document.getElementById('liveFlightsModal').classList.remove('active')" style="z-index: 1000; background: white; border-radius: 50%; width:30px; height:30px; top:15px; right:15px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">×</button>
+            <h2 style="text-align:center; margin: 10px 0 20px 0;">🌍 Canlı Uçuş Takibi (Simülasyon)</h2>
+            <div id="map" style="height: 500px; width: 100%; border-radius: 12px; z-index: 1;"></div>
+        </div>
+    </div>
+
+    <!-- İLETİŞİM MODALI -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="document.getElementById('contactModal').classList.remove('active')">×</button>
+            <h2>Bize Ulaşın</h2>
+            <div class="contact-info">
+                <p><strong>📞 Çağrı Merkezi:</strong> 444 0 849</p>
+                <p><strong>📧 E-posta:</strong> destek@ktdairlines.com</p>
+            </div>
+            <div class="input-group" style="margin-top:20px;">
+                <textarea id="contactMessage" rows="4" placeholder="Mesajınız..." style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); outline:none;"></textarea>
+            </div>
+            <button class="btn-submit" onclick="alert('Mesajınız gönderildi!'); document.getElementById('contactModal').classList.remove('active');">Gönder</button>
+        </div>
+    </div>
+
+    <!-- KÜÇÜK YAPAY ZEKA -->
+    <div class="chatbot-toggle" id="chatbotToggle">🤖</div>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">KTD Asistan <span id="closeChatBtn">×</span></div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg bot">Merhaba! Ben KTD Asistan. Size nasıl yardımcı olabilirim? (Soru sormak için giriş yapmalısınız.)</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Bir şey yazın...">
+            <button id="sendChatBtn">➤</button>
+        </div>
+    </div>
+
+    <!-- ÇEREZ ONAY BANDI -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-content">
+            <h3>🍪 Gizlilik ve Çerez Tercihleri</h3>
+            <p>Web sitemizi ziyaret ettiğinizde, deneyiminizi iyileştirmek, site trafiğini analiz etmek ve size özel içerikler sunmak amacıyla çerezler (cookies) kullanıyoruz. Zorunlu çerezler sitenin düzgün çalışması için gereklidir ve devre dışı bırakılamaz. Detaylı bilgi için <a href="sartlar.html" target="_blank">Çerez Politikamızı</a> inceleyebilirsiniz. Lütfen tercihlerinizi belirleyin.</p>
+            <div class="cookie-buttons">
+                <button class="btn-cookie-settings" onclick="document.getElementById('termsModal').classList.add('active')">Çerezleri Yönet</button>
+                <button class="btn-cookie-reject" onclick="acceptCookies(false)">Yalnızca Zorunlu Olanlar</button>
+                <button class="btn-cookie-accept" onclick="acceptCookies(true)">Hepsini Kabul Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBİL UYGULAMA (QR KOD) KISMI -->
+    <div class="mobile-app-section">
+        <div class="app-container">
+            <div class="app-text">
+                <h3>Mobil uygulamamızı indirin</h3>
+                <p>Mobil uygulama sayesinde biniş kartınız parmaklarınızın ucunda. Hızlı işlemler için mobil uygulamamızı indirin.</p>
+                <a href="#" onclick="alert('Mobil uygulama demo aşamasındadır.')">Detaylı bilgi »</a>
+            </div>
+            <div class="app-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://ktdairlines.com" alt="QR Kod">
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="margin-bottom: 15px; cursor:pointer;" id="footerLogo">
+                    <img src="KTD.png" alt="KTD" class="logo-img"> KTD AIRLINES
+                </div>
+                <p style="font-size: 13px; line-height: 1.6; margin-bottom: 15px;">Türkiye'nin gururu, dünyanın en geniş uçuş ağına sahip havayolu.</p>
+                
+                <h4 style="color: white; margin-bottom: 10px; font-size: 15px;">Bize Ulaşın</h4>
+                <p style="font-size: 13px; margin-bottom: 5px;">📞 444 0 849</p>
+                <p style="font-size: 13px; margin-bottom: 5px;">📧 destek@ktdairlines.com</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Bilet Al ve Yönet</h4>
+                <ul>
+                    <li><a class="book-btn">Koltuk Seçimi & Bilet</a></li>
+                    <li><a href="javascript:void(0)" onclick="document.getElementById('navFleet').click()">Filo Bilgileri</a></li>
+                    <li><a href="sartlar.html" target="_blank">Uçuş Durumu</a></li>
+                    <li><a href="sartlar.html" target="_blank">Check-in Yap</a></li>
+                    <li><a href="sartlar.html" target="_blank">Bilet İptal / İade</a></li>
+                    <li><a href="sartlar.html" target="_blank">Ekstra Bagaj Al</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Kurumsal & Yardım</h4>
+                <ul>
+                    <li><a href="sartlar.html" target="_blank">Hakkımızda</a></li>
+                    <li><a href="sartlar.html" target="_blank">Kariyer</a></li>
+                    <li><a href="sartlar.html" target="_blank">Basın Odası</a></li>
+                    <li><a href="sartlar.html" target="_blank">Yolcu Hakları</a></li>
+                    <li><a href="sartlar.html" target="_blank">Sıkça Sorulan Sorular</a></li>
+                    <li><a href="sartlar.html" target="_blank">Şartlar ve Hükümler</a></li>
+                </ul>
+            </div>
+            
+            <!-- SOSYAL MEDYA (9 ADET) -->
+            <div class="footer-col">
+                <h4>Sosyal Medya</h4>
+                <div class="social-links">
+                    <a href="https://instagram.com" target="_blank" class="social-btn ig" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com" target="_blank" class="social-btn tw" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="social-btn in" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://youtube.com" target="_blank" class="social-btn yt" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://tiktok.com" target="_blank" class="social-btn tt" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://facebook.com" target="_blank" class="social-btn fb" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/905550000000" target="_blank" class="social-btn wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://t.me/ktdairlines" target="_blank" class="social-btn tg" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="https://pinterest.com" target="_blank" class="social-btn pin" title="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- YASAL LİNKLER (SARTLAR.HTML'E YÖNLENDİRİLDİ) -->
+        <div class="footer-legal-links">
+            <a href="sartlar.html" target="_blank">Bilgi Toplumu Hizmetleri</a>
+            <a href="sartlar.html" target="_blank">Erişilebilirlik</a>
+            <a href="sartlar.html" target="_blank">Gizlilik ve Çerez Politikası</a>
+            <a href="sartlar.html" target="_blank">Yasal Uyarı</a>
+            <a href="sartlar.html" target="_blank">Yolcu Hakları</a>
+            <a href="javascript:void(0)" onclick="document.getElementById('cookieBanner').style.display = 'block';">Çerez Ayarlarını Değiştir</a>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 KTD AIRLINES. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
